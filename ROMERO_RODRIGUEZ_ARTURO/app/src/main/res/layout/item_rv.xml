@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="0.6"
+            android:layout_width="0dp"
+            android:padding="4dp"
+            android:gravity="center_vertical"
+            android:layout_height="match_parent"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_weight="0.2"
+                android:layout_height="0dp"
+                tools:text="NombreApellido"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/grayLithg"
+                android:id="@+id/tvNombreCompleto"
+                android:paddingTop="15dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_weight="0.3"
+                android:layout_height="0dp"
+                tools:text="Dirección"
+                android:textSize="18sp"
+                android:textColor="@color/grayLithg"
+                android:paddingTop="5dp"
+                android:id="@+id/tvDireccion" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_weight="0.4"
+            android:padding="4dp"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="100dp"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/fest1_200x200"
+                    android:id="@+id/iviPlace" />
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:adjustViewBounds="true"
+                    android:paddingTop="5dp"
+                    android:paddingRight="5dp"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/activo"
+                    android:visibility="gone"
+                    android:id="@+id/iviFlag"/>
+
+
+            </RelativeLayout>
+
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/vItem"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorBtnLogin"
+        android:alpha="0.3"/>
+
+</LinearLayout>

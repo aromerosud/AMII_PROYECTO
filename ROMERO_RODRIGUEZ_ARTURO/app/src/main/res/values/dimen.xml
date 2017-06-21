@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margen_izquierda">20dp</dimen>
+    <dimen name="margen_derecha">10dp</dimen>
+    <dimen name="margen_arriba">10dp</dimen>
+    <dimen name="margen_abajo">20dp</dimen>
+    <dimen name="ancho_panel_listarv">412dp</dimen>
+    <dimen name="ancho_panel_lista">512dp</dimen>
+</resources>

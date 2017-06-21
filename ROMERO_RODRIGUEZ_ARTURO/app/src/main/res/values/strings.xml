@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ROMERO_RODRIGUEZ_ARTURO</string>
+    <string name="userHint">Usuario</string>
+    <string name="passwordHint">Contraseña</string>
+</resources>

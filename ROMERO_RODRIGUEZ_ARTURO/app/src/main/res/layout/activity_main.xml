@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+
+
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:gravity="center_vertical"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <ImageButton
+                android:id="@+id/btnAgregar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@mipmap/btn_add"
+                android:background="@drawable/btn_toolbar"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:layout_marginTop="10dp"
+                />
+
+            <ImageButton
+                android:id="@+id/btnEditar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@mipmap/btn_edit"
+                android:background="@drawable/btn_toolbar"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:visibility="invisible"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="86dp"/>
+
+            <ImageButton
+                android:id="@+id/btnGuardar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@mipmap/btn_save"
+                android:background="@drawable/btn_toolbar"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:visibility="invisible"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="126dp"/>
+
+            <ImageButton
+                android:id="@+id/btnEliminar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@mipmap/btn_delete"
+                android:background="@drawable/btn_login"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:visibility="invisible"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="176dp"/>
+
+            <ImageButton
+                android:id="@+id/btnPoligono"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@mipmap/btn_polygon"
+                android:background="@drawable/btn_login"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:layout_marginTop="10dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="96dp"/>
+
+            <ImageButton
+                android:id="@+id/btnCerrarSesion"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@mipmap/btn_logout"
+                android:background="@drawable/btn_login"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginEnd="16dp"/>
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.Toolbar>
+
+
+
+    </android.support.design.widget.AppBarLayout>
+
+    <FrameLayout
+        android:id="@+id/contenedor_lista"
+        android:layout_width="@dimen/ancho_panel_listarv"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:background="@android:color/white" />
+
+    <FrameLayout
+        android:id="@+id/contenedor_detalle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginLeft="@dimen/ancho_panel_listarv"
+        android:layout_toRightOf="@+id/contenedor_lista"
+        android:background="@android:color/white"
+        android:elevation="8dp"
+
+        />
+
+</android.support.design.widget.CoordinatorLayout>
