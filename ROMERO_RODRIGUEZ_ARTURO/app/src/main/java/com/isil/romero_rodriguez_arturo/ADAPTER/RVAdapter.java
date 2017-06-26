@@ -65,7 +65,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.RVAdapterViewHolde
         {
             holder.iviFlag.setVisibility(View.GONE);
         }
-
     }
 
     @Override

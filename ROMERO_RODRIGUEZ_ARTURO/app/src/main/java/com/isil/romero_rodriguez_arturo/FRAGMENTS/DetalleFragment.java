@@ -150,8 +150,7 @@ public class DetalleFragment extends Fragment implements GoogleApiClient.Connect
             Toast.makeText(getActivity(), "No existe registro a eliminar",
                     Toast.LENGTH_SHORT).show();
         }
-//        double latitudMap;
-//        double longitudMap;
+
     }
 
     public void setText(Personal personal){
@@ -164,7 +163,15 @@ public class DetalleFragment extends Fragment implements GoogleApiClient.Connect
         tvFechaCumpleaños.setText(personal.getFechaCumple());
         flagActivo = personal.getFlagActivo();
         idPersonal = personal.getIdPersonal();
+        double latitudMap = personal.getLatitudMap();
+        double longitudMap = personal.getLongitudMap();
         lyBienvenida.setVisibility(View.GONE);
+
+        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitudMap,longitudMap),17f));
+
+        mMarker = mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(latitudMap,longitudMap))
+                .title("Mi ubicacion").flat(true).icon(BitmapDescriptorFactory
+                .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
     }
 
     @Override
@@ -297,4 +304,6 @@ public class DetalleFragment extends Fragment implements GoogleApiClient.Connect
             Log.d("location", "null");
         }
     }
+
+
 }

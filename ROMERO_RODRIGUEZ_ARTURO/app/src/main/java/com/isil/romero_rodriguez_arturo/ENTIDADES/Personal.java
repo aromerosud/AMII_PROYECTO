@@ -7,7 +7,7 @@ import java.util.Date;
  * Created by User on 16/06/2017.
  */
 
-public class Personal {
+public class Personal implements Serializable {
 
     private long idPersonal;
     private String nomPersonal;
