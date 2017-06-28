@@ -19,7 +19,7 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/ivFoto"
+                android:id="@+id/ivFotom"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="4"
@@ -181,7 +181,7 @@
     </LinearLayout>
 
     <FrameLayout
-        android:id="@+id/flMap"
+        android:id="@+id/flMapMant"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="50">

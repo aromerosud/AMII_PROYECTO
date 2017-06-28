@@ -2,6 +2,7 @@ package com.isil.romero_rodriguez_arturo.FRAGMENTS;
 
 import android.Manifest;
 import android.app.Fragment;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -11,12 +12,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -35,6 +38,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -61,13 +65,15 @@ public class MantenimientoFragment extends Fragment implements GoogleApiClient.C
     private CheckBox chkActivo;
     private Personal mPersonal;
     private ImageButton btnGuardar;
-    private long idPersonal=0;
+    private ImageView ivFotom;
+    private long idPersonal = 0;
     double vlatitud = 0.0;
     double vlongitud = 0.0;
     private RVAdapter mRVAdapter;
     private PersonalDAO mPersonalDAO;
     RecyclerView rvPersonal;
     private DetalleFragment mDetalleFragment;
+    private Location mlocation;
 
     @Nullable
     @Override
@@ -85,8 +91,9 @@ public class MantenimientoFragment extends Fragment implements GoogleApiClient.C
 
         MapFragment mapFragment = MapFragment.newInstance();
         mapFragment.getMapAsync(MantenimientoFragment.this);
-        getFragmentManager().beginTransaction().replace(R.id.flMap, mapFragment).commit();
+        getFragmentManager().beginTransaction().replace(R.id.flMapMant, mapFragment).commit();
 
+        ivFotom = (ImageView) view.findViewById(R.id.ivFotom);
         etNombre = (EditText) view.findViewById(R.id.etNombre);
         etApellido = (EditText) view.findViewById(R.id.etApellido);
         etDireccion = (EditText) view.findViewById(R.id.etDireccion);
@@ -95,7 +102,7 @@ public class MantenimientoFragment extends Fragment implements GoogleApiClient.C
         etTipoDocumento = (EditText) view.findViewById(R.id.etTipoDocumento);
         etFechaCumpleaños = (EditText) view.findViewById(R.id.etFechaCumpleaños);
         chkActivo = (CheckBox) view.findViewById(R.id.chkActivo);
-        btnGuardar = (ImageButton)getActivity().findViewById(R.id.btnGuardar);
+        btnGuardar = (ImageButton) getActivity().findViewById(R.id.btnGuardar);
         btnGuardar.setOnClickListener(onClickListenerBtnGuardar);
         mPersonalDAO = new PersonalDAO(getActivity());
         rvPersonal = (RecyclerView) getActivity().findViewById(R.id.rvPersonal);
@@ -104,11 +111,12 @@ public class MantenimientoFragment extends Fragment implements GoogleApiClient.C
         rvPersonal.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvPersonal.setAdapter(mRVAdapter);
 
-        mDetalleFragment = (DetalleFragment) Fragment.instantiate(getActivity(),DetalleFragment.class.getName());
+        mDetalleFragment = (DetalleFragment) Fragment.instantiate(getActivity(), DetalleFragment.class.getName());
+
+        //mlocation = new Location(String.valueOf(MantenimientoFragment.this));
 
         return view;
     }
-
 
 
     private View.OnClickListener onClickListenerBtnGuardar = new View.OnClickListener() {
@@ -121,41 +129,47 @@ public class MantenimientoFragment extends Fragment implements GoogleApiClient.C
     };
 
 
-    public void setTextMantenimiento(){
-        String accion = getArguments() != null ? getArguments().getString("accion"): "0";
-        etNombre.setText(getArguments() != null ? getArguments().getString("nombre"): "");
-        etApellido.setText(getArguments() != null ? getArguments().getString("apellido"): "");
-        etDireccion.setText(getArguments() != null ? getArguments().getString("direccion"): "");
-        etEdad.setText(getArguments() != null ? getArguments().getString("edad"): "");
-        etDNI.setText(getArguments() != null ? getArguments().getString("dni"): "");
-        etTipoDocumento.setText(getArguments() != null ? getArguments().getString("tipoDNI"): "");
-        etFechaCumpleaños.setText(getArguments() != null ? getArguments().getString("fechaCumpleaños"): "");
-        String flag = getArguments() != null ? getArguments().getString("flagActivo"): "0";
-        if(flag.equals("0")){chkActivo.setChecked(false);}
-        if(flag.equals("1")){chkActivo.setChecked(true);}
-        idPersonal = getArguments() != null ? getArguments().getLong("id"): 0;
-        vlatitud = getArguments() != null ? getArguments().getDouble("latitud"): 0.0;
-        vlongitud = getArguments() != null ? getArguments().getDouble("longitud"): 0.0;
-
-        if(accion.equals("0")){
+    public void setTextMantenimiento() {
+        String accion = getArguments() != null ? getArguments().getString("accion") : "0";
+        etNombre.setText(getArguments() != null ? getArguments().getString("nombre") : "");
+        etApellido.setText(getArguments() != null ? getArguments().getString("apellido") : "");
+        etDireccion.setText(getArguments() != null ? getArguments().getString("direccion") : "");
+        etEdad.setText(getArguments() != null ? getArguments().getString("edad") : "");
+        etDNI.setText(getArguments() != null ? getArguments().getString("dni") : "");
+        etTipoDocumento.setText(getArguments() != null ? getArguments().getString("tipoDNI") : "");
+        etFechaCumpleaños.setText(getArguments() != null ? getArguments().getString("fechaCumpleaños") : "");
+        String flag = getArguments() != null ? getArguments().getString("flagActivo") : "0";
+        if (flag.equals("0")) {
+            chkActivo.setChecked(false);
+        }
+        if (flag.equals("1")) {
+            chkActivo.setChecked(true);
+        }
+        idPersonal = getArguments() != null ? getArguments().getLong("id") : 0;
+        vlatitud = getArguments() != null ? getArguments().getDouble("latitud") : 0.0;
+        vlongitud = getArguments() != null ? getArguments().getDouble("longitud") : 0.0;
+        vlongitud = getArguments() != null ? getArguments().getDouble("longitud") : 0.0;
+        ivFotom.setImageResource(getArguments() != null ? getArguments().getInt("foto") : R.drawable.emp0);
+        if (accion.equals("0")) {
             cargarMapaInsert();
         }
-        if(accion.equals("1")){
+        if (accion.equals("1")) {
             cargarMapasEdit();
         }
-
-
     }
 
-    public void cargarMapaInsert(){
+    public void cargarMapaInsert() {
+
 
         mMarker = mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(mGoogleMap.getMyLocation().getLatitude(), mGoogleMap
-                .getMyLocation().getLongitude())).title("Mi ubicacion").flat(true).draggable(true).icon(BitmapDescriptorFactory
-                .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                        .getMyLocation().getLongitude())).title("Mi ubicacion").flat(true).icon(BitmapDescriptorFactory
+                        .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
         mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mGoogleMap.getMyLocation().getLatitude(),mGoogleMap
                 .getMyLocation().getLongitude()),17f));
 
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,this);
+
     }
 
     public void cargarMapasEdit(){
@@ -346,11 +360,19 @@ public class MantenimientoFragment extends Fragment implements GoogleApiClient.C
     @Override
     public void onLocationChanged(Location location) {
 
+
+
     }
 
     @Override
     public void onMapLoaded() {
         setTextMantenimiento();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        startLocationUpdates();
     }
 
 

@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,6 +59,7 @@ public class DetalleFragment extends Fragment implements GoogleApiClient.Connect
     private Marker mMarker;
     private TextView tvNombre, tvApellido, tvDireccion, tvEdad, tvDNI, tvTipoDocumento, tvFechaCumpleaños;
     private LinearLayout lyBienvenida;
+    private ImageView ivFoto;
     private ImageButton btnEditar, btnGuardar, btnEliminar;
     private MantenimientoFragment mMantenimientoFragment;
     private String flagActivo;
@@ -67,6 +69,7 @@ public class DetalleFragment extends Fragment implements GoogleApiClient.Connect
     private PersonalDAO mPersonalDAO;
     RecyclerView rvPersonal;
     private RVAdapter mRVAdapter;
+    int vfoto;
 
     @Nullable
     @Override
@@ -88,6 +91,7 @@ public class DetalleFragment extends Fragment implements GoogleApiClient.Connect
 
         mPersonalDAO = new PersonalDAO(getActivity());
 
+        ivFoto = (ImageView) view.findViewById(R.id.ivFoto);
         tvNombre = (TextView) view.findViewById(R.id.tvNombre);
         tvApellido = (TextView) view.findViewById(R.id.tvApellido);
         tvDireccion = (TextView) view.findViewById(R.id.tvDireccion);
@@ -138,6 +142,7 @@ public class DetalleFragment extends Fragment implements GoogleApiClient.Connect
             args.putLong("id", idPersonal);
             args.putDouble("latitud", latitudMap);
             args.putDouble("longitud", longitudMap);
+            args.putInt("foto", vfoto);
             mMantenimientoFragment.setArguments(args);
 
             btnEditar.setVisibility(v.GONE);
@@ -166,6 +171,8 @@ public class DetalleFragment extends Fragment implements GoogleApiClient.Connect
     }
 
     public void setText(Personal personal){
+        ivFoto.setImageResource(personal.getFoto());
+        vfoto = personal.getFoto();
         tvNombre.setText(personal.getNomPersonal());
         tvApellido.setText(personal.getApePersonal());
         tvDireccion.setText(personal.getDireccionPersonal());

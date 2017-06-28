@@ -1,15 +1,12 @@
 package com.isil.romero_rodriguez_arturo.ADAPTER;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.isil.romero_rodriguez_arturo.DAO.PersonalDAO;
 import com.isil.romero_rodriguez_arturo.ENTIDADES.Personal;
 import com.isil.romero_rodriguez_arturo.INTERFACE.CallbackPersonal;
 import com.isil.romero_rodriguez_arturo.R;
@@ -60,12 +57,18 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.RVAdapterViewHolde
         holder.tvNomCompleto.setText(nomPersonal + " " + apePersonal);
         holder.tvDireccion.setText(personal.getDireccionPersonal()==null?"" : personal.getDireccionPersonal());
         String flagActivo = personal.getFlagActivo()==null?"" : personal.getFlagActivo();
+        long idPersonal = personal.getIdPersonal();
         if(flagActivo.equals("1")){
             holder.iviFlag.setVisibility(View.VISIBLE);
         }else
         {
             holder.iviFlag.setVisibility(View.GONE);
         }
+
+
+        personal.RepositorioFotos(idPersonal);
+        holder.iviPlace.setImageResource(personal.getFoto());
+
     }
 
     @Override

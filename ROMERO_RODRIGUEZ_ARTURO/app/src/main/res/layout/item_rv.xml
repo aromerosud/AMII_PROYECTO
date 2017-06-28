@@ -54,12 +54,11 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
                     android:minHeight="100dp"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
-                    android:src="@drawable/fest1_200x200"
                     android:id="@+id/iviPlace" />
 
                 <ImageView
@@ -72,7 +71,6 @@
                     android:src="@drawable/activo"
                     android:visibility="gone"
                     android:id="@+id/iviFlag"/>
-
 
             </RelativeLayout>
 
