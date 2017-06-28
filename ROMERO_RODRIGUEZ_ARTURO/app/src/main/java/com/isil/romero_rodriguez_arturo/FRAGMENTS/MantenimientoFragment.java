@@ -162,7 +162,7 @@ public class MantenimientoFragment extends Fragment implements GoogleApiClient.C
 
 
         mMarker = mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(mGoogleMap.getMyLocation().getLatitude(), mGoogleMap
-                        .getMyLocation().getLongitude())).title("Mi ubicacion").flat(true).icon(BitmapDescriptorFactory
+                        .getMyLocation().getLongitude())).title("Mi ubicacion").flat(true).draggable(true).icon(BitmapDescriptorFactory
                         .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 
         mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mGoogleMap.getMyLocation().getLatitude(),mGoogleMap
