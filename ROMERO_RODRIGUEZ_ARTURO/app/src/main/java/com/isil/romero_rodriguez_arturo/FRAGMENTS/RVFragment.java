@@ -69,10 +69,9 @@ public class RVFragment extends Fragment implements CallbackPersonal {
 
     @Override
     public void onSelectPersonal(Personal personal) {
-
-        mDetalleFragment.setText(personal);
-        btnEditar.setVisibility(View.VISIBLE);
-        btnEliminar.setVisibility(View.VISIBLE);
+//        mDetalleFragment.setText(personal);
+//        btnEditar.setVisibility(View.VISIBLE);
+//        btnEliminar.setVisibility(View.VISIBLE);
     }
 
 

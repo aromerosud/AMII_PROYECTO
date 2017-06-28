@@ -1,9 +1,7 @@
 package com.isil.romero_rodriguez_arturo.FRAGMENTS;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -11,14 +9,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -40,9 +39,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.isil.romero_rodriguez_arturo.ADAPTER.RVAdapter;
 import com.isil.romero_rodriguez_arturo.DAO.PersonalDAO;
 import com.isil.romero_rodriguez_arturo.ENTIDADES.Personal;
-import com.isil.romero_rodriguez_arturo.INTERFACE.CallbackEditar;
+import com.isil.romero_rodriguez_arturo.INTERFACE.CallbackPersonal;
 import com.isil.romero_rodriguez_arturo.R;
 
 /**
@@ -50,7 +50,7 @@ import com.isil.romero_rodriguez_arturo.R;
  */
 
 public class MantenimientoFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient
-        .OnConnectionFailedListener, LocationListener, OnMapReadyCallback, CallbackEditar {
+        .OnConnectionFailedListener, LocationListener, OnMapReadyCallback, GoogleMap.OnMapLoadedCallback, CallbackPersonal {
 
     private final int REQUEST_LOCATION_CODE = 1;
     private GoogleApiClient mGoogleApiClient;
@@ -61,10 +61,13 @@ public class MantenimientoFragment extends Fragment implements GoogleApiClient.C
     private CheckBox chkActivo;
     private Personal mPersonal;
     private ImageButton btnGuardar;
-    private CallbackEditar mcallbackEditar;
     private long idPersonal=0;
-
-
+    double vlatitud = 0.0;
+    double vlongitud = 0.0;
+    private RVAdapter mRVAdapter;
+    private PersonalDAO mPersonalDAO;
+    RecyclerView rvPersonal;
+    private DetalleFragment mDetalleFragment;
 
     @Nullable
     @Override
@@ -92,111 +95,177 @@ public class MantenimientoFragment extends Fragment implements GoogleApiClient.C
         etTipoDocumento = (EditText) view.findViewById(R.id.etTipoDocumento);
         etFechaCumpleaños = (EditText) view.findViewById(R.id.etFechaCumpleaños);
         chkActivo = (CheckBox) view.findViewById(R.id.chkActivo);
-//        btnEliminar = (Button)getActivity().findViewById(R.id.btnEliminar);
-//        btnEliminar.setOnClickListener(onClickListenerBtnEliminar);
-
         btnGuardar = (ImageButton)getActivity().findViewById(R.id.btnGuardar);
         btnGuardar.setOnClickListener(onClickListenerBtnGuardar);
+        mPersonalDAO = new PersonalDAO(getActivity());
+        rvPersonal = (RecyclerView) getActivity().findViewById(R.id.rvPersonal);
+        mRVAdapter = new RVAdapter(MantenimientoFragment.this);
+        mRVAdapter.clearAllAddAll(mPersonalDAO.getAll());
+        rvPersonal.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvPersonal.setAdapter(mRVAdapter);
 
-        setTextMantenimiento();
+        mDetalleFragment = (DetalleFragment) Fragment.instantiate(getActivity(),DetalleFragment.class.getName());
+
         return view;
     }
 
-//    private View.OnClickListener onClickListenerBtnEliminar = new View.OnClickListener() {
-//        @Override
-//        public void onClick(View v) {
-//
-//            Eliminar();
-//        }
-//    };
+
 
     private View.OnClickListener onClickListenerBtnGuardar = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
             Guardar();
+            mRVAdapter.clearAllAddAll(mPersonalDAO.getAll());
         }
     };
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if(activity instanceof CallbackEditar)
-            mcallbackEditar = (CallbackEditar) activity;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if(context instanceof CallbackEditar)
-            mcallbackEditar = (CallbackEditar) context;
-    }
-
-    @Override
-    public void editarPersonal(Personal personal) {
-        //setTextMantenimiento(personal);
-    }
 
     public void setTextMantenimiento(){
-
-        etNombre.setText(getArguments() != null ? getArguments().getString("nombre"): "Nombre");
-        etApellido.setText(getArguments() != null ? getArguments().getString("apellido"): "Apellido");
-        etDireccion.setText(getArguments() != null ? getArguments().getString("direccion"): "Dirección");
-        etEdad.setText(getArguments() != null ? getArguments().getString("edad"): "Edad");
-        etDNI.setText(getArguments() != null ? getArguments().getString("dni"): "Número doc.");
-        etTipoDocumento.setText(getArguments() != null ? getArguments().getString("tipoDNI"): "Tipo doc.");
-        etFechaCumpleaños.setText(getArguments() != null ? getArguments().getString("fechaCumpleaños"): "Cumpleaños");
+        String accion = getArguments() != null ? getArguments().getString("accion"): "0";
+        etNombre.setText(getArguments() != null ? getArguments().getString("nombre"): "");
+        etApellido.setText(getArguments() != null ? getArguments().getString("apellido"): "");
+        etDireccion.setText(getArguments() != null ? getArguments().getString("direccion"): "");
+        etEdad.setText(getArguments() != null ? getArguments().getString("edad"): "");
+        etDNI.setText(getArguments() != null ? getArguments().getString("dni"): "");
+        etTipoDocumento.setText(getArguments() != null ? getArguments().getString("tipoDNI"): "");
+        etFechaCumpleaños.setText(getArguments() != null ? getArguments().getString("fechaCumpleaños"): "");
         String flag = getArguments() != null ? getArguments().getString("flagActivo"): "0";
         if(flag.equals("0")){chkActivo.setChecked(false);}
         if(flag.equals("1")){chkActivo.setChecked(true);}
         idPersonal = getArguments() != null ? getArguments().getLong("id"): 0;
-//        double latitudMap;
-//        double longitudMap;
+        vlatitud = getArguments() != null ? getArguments().getDouble("latitud"): 0.0;
+        vlongitud = getArguments() != null ? getArguments().getDouble("longitud"): 0.0;
+
+        if(accion.equals("0")){
+            cargarMapaInsert();
+        }
+        if(accion.equals("1")){
+            cargarMapasEdit();
+        }
+
+
+    }
+
+    public void cargarMapaInsert(){
+
+        mMarker = mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(mGoogleMap.getMyLocation().getLatitude(), mGoogleMap
+                .getMyLocation().getLongitude())).title("Mi ubicacion").flat(true).draggable(true).icon(BitmapDescriptorFactory
+                .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mGoogleMap.getMyLocation().getLatitude(),mGoogleMap
+                .getMyLocation().getLongitude()),17f));
+
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,this);
+    }
+
+    public void cargarMapasEdit(){
+
+
+        mMarker = mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(vlatitud,vlongitud))
+                .title("Mi ubicacion").flat(true).draggable(true).icon(BitmapDescriptorFactory
+                        .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
+        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(vlatitud,vlongitud),17f));
+
+
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,this);
+
+    }
+
+    private boolean validaCamposVacios() {
+        String nombres = etNombre.getText().toString().trim();
+        String apellidos = etApellido.getText().toString().trim();
+        String direccion = etDireccion.getText().toString().trim();
+        String edad = etEdad.getText().toString().trim();
+        String dni = etDNI.getText().toString().trim();
+        String tipoDoc = etTipoDocumento.getText().toString().trim();
+        String fechaNac = etFechaCumpleaños.getText().toString().trim();
+
+        if (nombres.isEmpty()) {
+            etNombre.setError("Ingresar nombre");
+            return false;
+        }
+        if (apellidos.isEmpty()) {
+            etApellido.setError("Ingresar apellidos");
+            return false;
+        }
+
+        if (direccion.isEmpty()) {
+            etDireccion.setError("Ingresar dirección");
+            return false;
+        }
+        if (edad.isEmpty()) {
+            etEdad.setError("Ingresar edad");
+            return false;
+        }
+        if (dni.isEmpty()) {
+            etDNI.setError("Ingresar documento");
+            return false;
+        }
+        if (tipoDoc.isEmpty()) {
+            etTipoDocumento.setError("Ingresar tipo de documento");
+            return false;
+        }
+        if (fechaNac.isEmpty()) {
+            etFechaCumpleaños.setError("Ingresar cumpleaños");
+            return false;
+        }
+
+        if (nombres.isEmpty()) return false;
+        if (apellidos.isEmpty()) return false;
+        if (direccion.isEmpty()) return false;
+        if (edad.isEmpty()) return false;
+        if (dni.isEmpty()) return false;
+        if (tipoDoc.isEmpty()) return false;
+        if (fechaNac.isEmpty()) return false;
+
+        return true;
     }
 
     public void Guardar(){
-        Personal personal = new Personal();
-        if(idPersonal==0){
-            personal.setNomPersonal(etNombre.getText().toString());
-            personal.setApePersonal(etApellido.getText().toString());
-            personal.setDireccionPersonal(etDireccion.getText().toString());
-            personal.setEdadPersonal(etEdad.getText().toString());
-            personal.setNumDoc(etDNI.getText().toString());
-            personal.setTipoDoc(etTipoDocumento.getText().toString());
-            personal.setFechaCumple(etFechaCumpleaños.getText().toString());
-            personal.setFlagActivo(chkActivo.isChecked()?"1":"0");
-            PersonalDAO personalDAO = new PersonalDAO(getActivity());
-            personalDAO.insert(personal);
-        }else{
-            personal.setIdPersonal((idPersonal));
-            personal.setNomPersonal(etNombre.getText().toString());
-            personal.setApePersonal(etApellido.getText().toString());
-            personal.setDireccionPersonal(etDireccion.getText().toString());
-            personal.setEdadPersonal(etEdad.getText().toString());
-            personal.setNumDoc(etDNI.getText().toString());
-            personal.setTipoDoc(etTipoDocumento.getText().toString());
-            personal.setFechaCumple(etFechaCumpleaños.getText().toString());
-            personal.setFlagActivo(chkActivo.isChecked()?"1":"0");
-            PersonalDAO personalDAO = new PersonalDAO(getActivity());
-            personalDAO.update(personal);
-        }
-//        double latitudMap;
-//        double longitudMap;
-    }
+            if(validaCamposVacios()){
+            Personal personal = new Personal();
+            if(idPersonal==0){
+                personal.setNomPersonal(etNombre.getText().toString());
+                personal.setApePersonal(etApellido.getText().toString());
+                personal.setDireccionPersonal(etDireccion.getText().toString());
+                personal.setEdadPersonal(etEdad.getText().toString());
+                personal.setNumDoc(etDNI.getText().toString());
+                personal.setTipoDoc(etTipoDocumento.getText().toString());
+                personal.setFechaCumple(etFechaCumpleaños.getText().toString());
+                personal.setFlagActivo(chkActivo.isChecked()?"1":"0");
+                personal.setLatitudMap(vlatitud);
+                personal.setLongitudMap(vlongitud);
+                PersonalDAO personalDAO = new PersonalDAO(getActivity());
+                personalDAO.insert(personal);
+                long newID = personal.getIdPersonal();
+                if(newID!=0){
+                    btnGuardar.setVisibility(View.GONE);
+                    getFragmentManager().beginTransaction().replace(R.id.contenedor_detalle,mDetalleFragment).commit();
+                    Toast.makeText(getActivity(),"Se agregaron los datos del personal correctamente",Toast.LENGTH_SHORT).show();
+                }
 
-//    public void Eliminar(){
-//        Personal personal = new Personal();
-//        if(idPersonal!=0){
-//            personal.setIdPersonal((idPersonal));
-//            PersonalDAO personalDAO = new PersonalDAO(getActivity());
-//            personalDAO.delete(personal);
-//        }else{
-//            Toast.makeText(getActivity(), "No existe registro a eliminar",
-//                    Toast.LENGTH_SHORT).show();
-//        }
-////        double latitudMap;
-////        double longitudMap;
-//    }
+            }else{
+                personal.setIdPersonal((idPersonal));
+                personal.setNomPersonal(etNombre.getText().toString());
+                personal.setApePersonal(etApellido.getText().toString());
+                personal.setDireccionPersonal(etDireccion.getText().toString());
+                personal.setEdadPersonal(etEdad.getText().toString());
+                personal.setNumDoc(etDNI.getText().toString());
+                personal.setTipoDoc(etTipoDocumento.getText().toString());
+                personal.setFechaCumple(etFechaCumpleaños.getText().toString());
+                personal.setFlagActivo(chkActivo.isChecked()?"1":"0");
+                personal.setLatitudMap(vlatitud);
+                personal.setLongitudMap(vlongitud);
+                PersonalDAO personalDAO = new PersonalDAO(getActivity());
+                personalDAO.update(personal);
+                getFragmentManager().beginTransaction().replace(R.id.contenedor_detalle,mDetalleFragment).commit();
+                Toast.makeText(getActivity(),"Se actualizaron los datos del personal correctamente",Toast.LENGTH_SHORT).show();
+                btnGuardar.setVisibility(View.GONE);
+            }
+
+        }
+    }
 
     @Override
     public void onStart() {
@@ -276,33 +345,19 @@ public class MantenimientoFragment extends Fragment implements GoogleApiClient.C
 
     @Override
     public void onLocationChanged(Location location) {
-        if (location != null) {
-            Log.d("location", location.getLatitude() + ", " + location.getLongitude());
-            if(mGoogleMap!=null){
-                if(mMarker==null){
-//                    mMarker = mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(),location
-//                            .getLongitude())).title("Mi ubicacion").flat(true));
-                    mMarker = mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(),location
-                            .getLongitude())).title("Mi ubicacion").flat(true).icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                }
-                else{
-                    mMarker.setPosition(new LatLng(location.getLatitude(),location
-                            .getLongitude()));
-                }
-                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location
-                        .getLongitude()),17f));
-//                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location
-//                        .getLongitude()),17f));
-            }
-        } else {
-            Log.d("location", "null");
-        }
+
     }
+
+    @Override
+    public void onMapLoaded() {
+        setTextMantenimiento();
+    }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
+        mGoogleMap.setOnMapLoadedCallback(this);
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -316,7 +371,29 @@ public class MantenimientoFragment extends Fragment implements GoogleApiClient.C
         mGoogleMap.setMyLocationEnabled(false);
         mGoogleMap.setMyLocationEnabled(true);
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+        mGoogleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),17f));
+                vlatitud = marker.getPosition().latitude;
+                vlongitud = marker.getPosition().longitude;
+            }
+        });
     }
 
+    @Override
+    public void onSelectPersonal(Personal personal) {
 
+    }
 }

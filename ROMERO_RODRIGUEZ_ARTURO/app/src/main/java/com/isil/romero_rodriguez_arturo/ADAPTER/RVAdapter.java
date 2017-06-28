@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.isil.romero_rodriguez_arturo.DAO.PersonalDAO;
 import com.isil.romero_rodriguez_arturo.ENTIDADES.Personal;
 import com.isil.romero_rodriguez_arturo.INTERFACE.CallbackPersonal;
 import com.isil.romero_rodriguez_arturo.R;

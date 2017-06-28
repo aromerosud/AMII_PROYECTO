@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -17,8 +16,6 @@ import com.isil.romero_rodriguez_arturo.ENTIDADES.Personal;
 import com.isil.romero_rodriguez_arturo.FRAGMENTS.DetalleFragment;
 import com.isil.romero_rodriguez_arturo.FRAGMENTS.MantenimientoFragment;
 import com.isil.romero_rodriguez_arturo.FRAGMENTS.RVFragment;
-import com.isil.romero_rodriguez_arturo.INTERFACE.CallbackEditar;
-import com.isil.romero_rodriguez_arturo.INTERFACE.CallbackPersonal;
 
 /**
  * Created by User on 15/06/2017.

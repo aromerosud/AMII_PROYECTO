@@ -62,7 +62,8 @@
                             android:textSize="18sp"
                             android:paddingLeft="10dp"
                             android:paddingRight="10dp"
-                            android:hint="Nombre"/>
+                            android:hint="Nombre"
+                            android:textColorHint="@color/grayLithg"/>
 
                         <EditText
                             android:id="@+id/etApellido"
@@ -72,7 +73,8 @@
                             android:paddingLeft="10dp"
                             android:paddingRight="@dimen/margen_derecha"
                             android:paddingTop="@dimen/margen_arriba"
-                            android:hint="Apellido"/>
+                            android:hint="Apellido"
+                            android:textColorHint="@color/grayLithg"/>
 
                         <EditText
                             android:id="@+id/etDireccion"
@@ -81,7 +83,8 @@
                             android:textSize="18sp"
                             android:paddingLeft="10dp"
                             android:paddingTop="@dimen/margen_arriba"
-                            android:hint="Dirección" />
+                            android:hint="Dirección"
+                            android:textColorHint="@color/grayLithg"/>
 
                         <EditText
                             android:id="@+id/etEdad"
@@ -90,7 +93,9 @@
                             android:textSize="18sp"
                             android:paddingLeft="10dp"
                             android:paddingTop="@dimen/margen_arriba"
-                            android:hint="Edad" />
+                            android:hint="Edad"
+                            android:textColorHint="@color/grayLithg"
+                            android:inputType="number"/>
 
                         <EditText
                             android:id="@+id/etDNI"
@@ -99,7 +104,8 @@
                             android:textSize="18sp"
                             android:paddingLeft="10dp"
                             android:paddingTop="@dimen/margen_arriba"
-                            android:hint="Número de documento" />
+                            android:hint="Número de documento"
+                            android:textColorHint="@color/grayLithg"/>
 
                         <EditText
                             android:id="@+id/etTipoDocumento"
@@ -109,7 +115,8 @@
                             android:textSize="18sp"
                             android:paddingLeft="10dp"
                             android:paddingTop="@dimen/margen_arriba"
-                            android:hint="Tipo Documento" />
+                            android:hint="Tipo Documento"
+                            android:textColorHint="@color/grayLithg"/>
 
                         <EditText
                             android:id="@+id/etFechaCumpleaños"
@@ -119,14 +126,16 @@
                             android:textSize="18sp"
                             android:paddingLeft="10dp"
                             android:paddingTop="@dimen/margen_arriba"
-                            android:hint="Fecha de cumpleaños" />
+                            android:hint="Fecha de cumpleaños"
+                            android:textColorHint="@color/grayLithg"/>
 
                         <CheckBox
                             android:id="@+id/chkActivo"
                             android:paddingTop="@dimen/margen_arriba"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Activar personal" />
+                            android:text="Activar personal"
+                            android:textColor="@color/grayLithg"/>
 
                     </LinearLayout>
 

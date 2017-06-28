@@ -76,10 +76,10 @@ public class LoginActivity extends Activity {
     }
 
     private boolean validaCamposVacios() {
-        String email = etUser.getText().toString().trim();
+        String user = etUser.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        if (email.isEmpty()) {
+        if (user.isEmpty()) {
             etUser.setError("Ingrese su usuario");
             return false;
         }
@@ -87,7 +87,7 @@ public class LoginActivity extends Activity {
             etPassword.setError("Ingrese su contraseña");
             return false;
         }
-        if (email.isEmpty()) return false;
+        if (user.isEmpty()) return false;
         if (password.isEmpty()) return false;
 
         return true;

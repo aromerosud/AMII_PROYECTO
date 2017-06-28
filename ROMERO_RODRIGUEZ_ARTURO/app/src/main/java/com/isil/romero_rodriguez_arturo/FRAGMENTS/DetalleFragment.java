@@ -1,9 +1,7 @@
 package com.isil.romero_rodriguez_arturo.FRAGMENTS;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -11,12 +9,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -41,24 +38,18 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.isil.romero_rodriguez_arturo.ADAPTER.RVAdapter;
 import com.isil.romero_rodriguez_arturo.DAO.PersonalDAO;
 import com.isil.romero_rodriguez_arturo.ENTIDADES.Personal;
-import com.isil.romero_rodriguez_arturo.INTERFACE.CallbackEditar;
 import com.isil.romero_rodriguez_arturo.INTERFACE.CallbackPersonal;
 import com.isil.romero_rodriguez_arturo.R;
-
-import java.io.Serializable;
-
-import static com.isil.romero_rodriguez_arturo.R.id.btnGuardar;
-import static com.isil.romero_rodriguez_arturo.R.id.tvNomApeDetalle;
-import static com.isil.romero_rodriguez_arturo.R.id.visible;
 
 /**
  * Created by User on 15/06/2017.
  */
 
 public class DetalleFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient
-        .OnConnectionFailedListener, LocationListener, OnMapReadyCallback {
+        .OnConnectionFailedListener, LocationListener, OnMapReadyCallback, CallbackPersonal {
 
     private final int REQUEST_LOCATION_CODE = 1;
     private GoogleApiClient mGoogleApiClient;
@@ -66,12 +57,16 @@ public class DetalleFragment extends Fragment implements GoogleApiClient.Connect
     private GoogleMap mGoogleMap;
     private Marker mMarker;
     private TextView tvNombre, tvApellido, tvDireccion, tvEdad, tvDNI, tvTipoDocumento, tvFechaCumpleaños;
-    private LinearLayout lyBienvenida ;
-    private CallbackEditar mcallbackEditar;
+    private LinearLayout lyBienvenida;
     private ImageButton btnEditar, btnGuardar, btnEliminar;
     private MantenimientoFragment mMantenimientoFragment;
     private String flagActivo;
     private long idPersonal;
+    double latitudMap;
+    double longitudMap;
+    private PersonalDAO mPersonalDAO;
+    RecyclerView rvPersonal;
+    private RVAdapter mRVAdapter;
 
     @Nullable
     @Override
@@ -91,6 +86,8 @@ public class DetalleFragment extends Fragment implements GoogleApiClient.Connect
         mapFragment.getMapAsync(DetalleFragment.this);
         getFragmentManager().beginTransaction().replace(R.id.flMap, mapFragment).commit();
 
+        mPersonalDAO = new PersonalDAO(getActivity());
+
         tvNombre = (TextView) view.findViewById(R.id.tvNombre);
         tvApellido = (TextView) view.findViewById(R.id.tvApellido);
         tvDireccion = (TextView) view.findViewById(R.id.tvDireccion);
@@ -107,6 +104,12 @@ public class DetalleFragment extends Fragment implements GoogleApiClient.Connect
         btnEliminar = (ImageButton)getActivity().findViewById(R.id.btnEliminar);
         btnEliminar.setOnClickListener(onClickListenerBtnEliminar);
 
+        rvPersonal = (RecyclerView) getActivity().findViewById(R.id.rvPersonal);
+        mRVAdapter = new RVAdapter(DetalleFragment.this);
+        mRVAdapter.clearAllAddAll(mPersonalDAO.getAll());
+        rvPersonal.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvPersonal.setAdapter(mRVAdapter);
+
         return view;
     }
 
@@ -115,6 +118,7 @@ public class DetalleFragment extends Fragment implements GoogleApiClient.Connect
         public void onClick(View v) {
 
             Eliminar();
+            mRVAdapter.clearAllAddAll(mPersonalDAO.getAll());
         }
     };
 
@@ -122,6 +126,7 @@ public class DetalleFragment extends Fragment implements GoogleApiClient.Connect
         @Override
         public void onClick(View v) {
             Bundle args = new Bundle();
+            args.putString("accion", "1");
             args.putString("nombre", tvNombre.getText().toString());
             args.putString("apellido", tvApellido.getText().toString());
             args.putString("direccion", tvDireccion.getText().toString());
@@ -131,9 +136,12 @@ public class DetalleFragment extends Fragment implements GoogleApiClient.Connect
             args.putString("fechaCumpleaños", tvFechaCumpleaños.getText().toString());
             args.putString("flagActivo", flagActivo.toString());
             args.putLong("id", idPersonal);
+            args.putDouble("latitud", latitudMap);
+            args.putDouble("longitud", longitudMap);
             mMantenimientoFragment.setArguments(args);
 
             btnEditar.setVisibility(v.GONE);
+            btnEliminar.setVisibility(v.GONE);
             btnGuardar.setVisibility(v.VISIBLE);
 
             getFragmentManager().beginTransaction().replace(R.id.contenedor_detalle,mMantenimientoFragment).commit();
@@ -146,6 +154,10 @@ public class DetalleFragment extends Fragment implements GoogleApiClient.Connect
             personal.setIdPersonal((idPersonal));
             PersonalDAO personalDAO = new PersonalDAO(getActivity());
             personalDAO.delete(personal);
+            btnEditar.setVisibility(View.GONE);
+            btnEliminar.setVisibility(View.GONE);
+            lyBienvenida.setVisibility(View.VISIBLE);
+            Toast.makeText(getActivity(),"Se elimino el registro correctamente",Toast.LENGTH_SHORT).show();
         }else{
             Toast.makeText(getActivity(), "No existe registro a eliminar",
                     Toast.LENGTH_SHORT).show();
@@ -163,8 +175,8 @@ public class DetalleFragment extends Fragment implements GoogleApiClient.Connect
         tvFechaCumpleaños.setText(personal.getFechaCumple());
         flagActivo = personal.getFlagActivo();
         idPersonal = personal.getIdPersonal();
-        double latitudMap = personal.getLatitudMap();
-        double longitudMap = personal.getLongitudMap();
+        latitudMap = personal.getLatitudMap();
+        longitudMap = personal.getLongitudMap();
         lyBienvenida.setVisibility(View.GONE);
 
         mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitudMap,longitudMap),17f));
@@ -174,19 +186,8 @@ public class DetalleFragment extends Fragment implements GoogleApiClient.Connect
                 .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if(activity instanceof CallbackEditar)
-            mcallbackEditar = (CallbackEditar) activity;
-    }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if(context instanceof CallbackEditar)
-            mcallbackEditar = (CallbackEditar) context;
-    }
+
 
     @Override
     public void onStart() {
@@ -281,29 +282,15 @@ public class DetalleFragment extends Fragment implements GoogleApiClient.Connect
 
     @Override
     public void onLocationChanged(Location location) {
-        if (location != null) {
-            Log.d("location", location.getLatitude() + ", " + location.getLongitude());
-            if(mGoogleMap!=null){
-                if(mMarker==null){
-//                    mMarker = mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(),location
-//                            .getLongitude())).title("Mi ubicacion").flat(true));
-                    mMarker = mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(),location
-                            .getLongitude())).title("Mi ubicacion").flat(true).icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                }
-                else{
-                    mMarker.setPosition(new LatLng(location.getLatitude(),location
-                            .getLongitude()));
-                }
-                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location
-                        .getLongitude()),17f));
-//                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location
-//                        .getLongitude()),17f));
-            }
-        } else {
-            Log.d("location", "null");
-        }
     }
 
 
+    @Override
+    public void onSelectPersonal(Personal personal) {
+
+        setText(personal);
+        btnEditar.setVisibility(View.VISIBLE);
+        btnEliminar.setVisibility(View.VISIBLE);
+
+    }
 }

@@ -37,6 +37,7 @@ public class PersonalDAO {
         mDataBaseHelper = new DataBaseHelper(context);
     }
 
+
     public ArrayList<Personal> getAll(){
         Cursor cursor = mDataBaseHelper.openDataBase().query(TABLE,null,null,null,null,null,null);
         ArrayList<Personal>lstPersonal = new ArrayList<>();
@@ -58,8 +59,8 @@ public class PersonalDAO {
         cv.put(COL_DIRECCIONPERSONAL, personal.getDireccionPersonal());
         cv.put(COL_EDADPERSONAL, personal.getEdadPersonal());
         cv.put(COL_FLAGACTIVO, personal.getFlagActivo());
-//        cv.put(COL_LATITUDMAP, personal.getLatitudMap());
-//        cv.put(COL_LONGITUDMAP, personal.getLongitudMap());
+        cv.put(COL_LATITUDMAP, personal.getLatitudMap());
+        cv.put(COL_LONGITUDMAP, personal.getLongitudMap());
         cv.put(COL_NUMDOC, personal.getNumDoc());
         cv.put(COL_TIPODOC, personal.getTipoDoc());
         cv.put(COL_FECHACUMPLE, personal.getFechaCumple());
@@ -75,8 +76,8 @@ public class PersonalDAO {
         cv.put(COL_DIRECCIONPERSONAL, personal.getDireccionPersonal());
         cv.put(COL_EDADPERSONAL, personal.getEdadPersonal());
         cv.put(COL_FLAGACTIVO, personal.getFlagActivo());
-//        cv.put(COL_LATITUDMAP, personal.getLatitudMap());
-//        cv.put(COL_LONGITUDMAP, personal.getLongitudMap());
+        cv.put(COL_LATITUDMAP, personal.getLatitudMap());
+        cv.put(COL_LONGITUDMAP, personal.getLongitudMap());
         cv.put(COL_NUMDOC, personal.getNumDoc());
         cv.put(COL_TIPODOC, personal.getTipoDoc());
         cv.put(COL_FECHACUMPLE, personal.getFechaCumple());
